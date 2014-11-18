@@ -1,17 +1,24 @@
 package xmlparser
+import scala.collection.immutable.map
 
 /**
  * Contains classes providing a tree representation of the XML DOM
  *
  * Created by hawk on 11/12/14.
  */
-abstract class Node(ident: String)
 class Element(ident: String,
-              children: List[Node],
-              attributes: List[Attribute]) extends Node(ident) {
+              parent: Element,
+              children: List[Element],
+              attrs: Attrs) extends Node(ident) {
+                            
+  type Attrs = Map[String, String]
+  
   def apply(ident: String,
-            content: List[Node] = List(),
-            attributes: List[Attribute] = List()): Element = new Element(ident,children,attributes)
+            content: List[Element] = List(),
+            attrs: Attrs = List()): Element = new Element(ident,this,children,attrs)
 }
-class Leaf(ident: String, text: String, attributes: List[Attribute]) extends Element(ident, Nil, attributes)
-case class Attribute(ident: String, value: String) extends Node(ident)
+class Leaf(   ident: String, 
+              parent: Element,
+              text: String,
+              attrs: Attrs
+              ) extends Element(ident, parent, Nil, attrs)
